@@ -1,18 +1,30 @@
-import React, { useState } from "react";
-import { ANIMALS } from "@frontendmasters/pet";
+import React, { useState, useEffect } from "react";
+import pet, { ANIMALS } from "@frontendmasters/pet";
+import useDropdown from "./useDropdown";
 
 const SearchParams = () => {
   // The first part is always the current state the second part is the update
 
-  const [location, setLocation] = useState("Dallas, TX");
-  const [animal, setAnimal] = useState("dog");
+  const [location, setLocation] = useState("Seattle, WA");
+  const [breeds, setBreeds] = useState([]);
+  const [animal, AnimalDropdown] = useDropdown("Animal", "dog", ANIMALS);
+  const [breed, BreedDropdown, setBreed] = useDropdown("Breed", "", breeds);
+
+  useEffect(() => {
+    setBreeds([]);
+    setBreed("");
+
+    pet.breeds(animal).then(({ breeds: apiBreeds }) => {
+      const breedStrings = apiBreeds.map(({ name }) => name);
+
+      setBreeds(breedStrings);
+    }, console.error);
+  }, [animal, setBreeds, setBreed]);
 
   return (
     <div className="search-params">
       <h1>Search-params</h1>
-
       <p>{location}</p>
-
       <form>
         <label htmlFor="location">
           Location
@@ -23,23 +35,10 @@ const SearchParams = () => {
             onChange={(e) => setLocation(e.target.value)}
           />
         </label>
-        <label htmlFor="animal">
-          Animal
-          <select
-            id="animal"
-            value={animal}
-            onChange={(e) => setAnimal(e.target.value)}
-            //Fixing accessability Issue
-            onBlur={(e) => setAnimal(e.target.value)}
-          >
-            <option>All</option>
-            {ANIMALS.map((data, i) => (
-              <option key={i} value={data}>
-                {data}
-              </option>
-            ))}
-          </select>
-        </label>
+
+        <AnimalDropdown />
+        <BreedDropdown />
+
         <button>Submit</button>
       </form>
     </div>
