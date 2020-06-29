@@ -25,3 +25,9 @@
     Server Side Rendering
     Redux
     Testing
+
+#### Clone and Star :star:
+
+    git clone https://github.com/DaSilvaBrunoTexas/react_foundation.git
+    npm i
+    npm run dev
